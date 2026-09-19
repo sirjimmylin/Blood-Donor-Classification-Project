@@ -21,7 +21,7 @@ You can reproduce this environment using the Project YAML file provided here: [P
 ### Folder Organization and Dataset Citation
 For the Jupyter Notebooks, navigate to the src folder. The baseline evaluation metric calculation and correlation plot is done in the projectbaseline.ipynb notebook, while the project.ipynb is the most up-to-date notebook for the rest of the data. oldproject.ipynb is a defunct notebook, although feel free to explore it for any insights.
 
-The raw dataset is found in the data folder, titled `hcvdat0.csv`. Preprocessed data is in the [preprocessed_data](data/preprocessed_data.pkl)
+The raw dataset is found in the data folder, titled `blooddonor.csv`. Preprocessed data is in the [preprocessed_data](data/preprocessed_data.pkl)
 
 Saved figures are in the figures folder.
 
