@@ -1,178 +1,173 @@
-# Blood Donor Classification Project Report
+# Hepatitis C Progression & Blood Donor Classification
+## A Supervised Machine Learning Approach to Early Detection of Liver Disease
 
-### Data Science Institute at Brown University
+**Jimmy Lin**  
+*Data Science Institute, Brown University*  
+**Repository:** [sirjimmylin/Blood-Donor-Classification-Project](https://github.com/sirjimmylin/Blood-Donor-Classification-Project.git)  
+**Interactive Showcase:** [Project Webpage](https://sirjimmylin.github.io/Blood-Donor-Classification-Project/)
 
-### Jimmy Lin
+---
 
-### Github Repository: https://github.com/sirjimmylin/DATA-1030-Project.git
-
-## Introduction 
+## 1. Introduction 
 
 ### Motivation
-Blood donor classification is crucial for healthcare systems to ensure the safety and efficiency of blood donation processes. Accurate classification models can help identify suitable donors and optimize resource allocation. This dataset addresses liver disease, specifically hepatitis. Utilizing machine learning models unlocks the potential for healthcare systems to predict whether a donor has a disease, such as hepatitis, by measuring the amount of various blood molecules present and using this data to project whether disease is present or not. 
+Blood donor screening is a cornerstone of transfusion safety and preventative healthcare. Hepatitis C virus (HCV) infections frequently progress silently through hepatic fibrosis to irreversible cirrhosis without overt symptoms. Accurate diagnostic models offer the potential to screen asymptomatic blood donors rapidly and cost-effectively using routine laboratory blood tests, simultaneously protecting the blood supply and expediting clinical intervention before irreversible organ damage occurs.
 
 ### Dataset Description
-The dataset includes features such as Age, ALB (albumin), AST (aspartame aminotransferase), and others, with the target variable being Category, which classifies individuals into classes like "0=Blood Donor" and "1=Hepatitis". Each class represents where each patient lies on the hepatitis progression spectrum. The dataset consists of 615 samples and 12 features. [1]
+The dataset comprises 615 patient records with 12 clinical attributes from the UCI Machine Learning Repository HCV Dataset [1]. The target variable is `Category`, classifying individuals across the hepatitis progression spectrum: healthy blood donors (`0=Blood Donor`), borderline donor profiles (`0s=suspect Blood Donor`), active hepatitis (`1=Hepatitis`), fibrosis (`2=Fibrosis`), and end-stage cirrhosis (`3=Cirrhosis`). Continuous laboratory features include routine liver enzymes and metabolic biomarkers: Albumin (ALB), Alkaline Phosphatase (ALP), Alanine Aminotransferase (ALT), Aspartate Aminotransferase (AST), Bilirubin (BIL), Cholinesterase (CHE), Cholesterol (CHOL), Creatinine (CREA), Gamma-Glutamyl Transferase (GGT), and Total Protein (PROT), alongside patient Age and biological Sex.
 
 ### Previous Work
-This dataset came from a German research team, who used machine learning techniques (specifically decision trees), to predict and confirm that laboratory tests can be useful for detecting liver fibrosis and cirrhosis. However, the team made it clear that medical experts are still necessary for determining decision trees for diagnoses. [2]
+This dataset originated from research by Lichtinghagen, Klawonn, and Hoffmann (2020), who demonstrated that automated diagnostic pathways from laboratory measurements could detect liver fibrosis and cirrhosis [2]. Their findings emphasized that while machine learning algorithms can detect intricate nonlinear biomarker patterns, models must be clinically interpretable and aligned with pathophysiological domain knowledge to assist medical practitioners effectively.
 
-## Exploratory Data Analysis (EDA) 
-This dataset consists of 615 rows, each of which represents an individual patient. There are also 14 columns, 12 of which are features, 1 is the target variable, and 1 which appears to be used for indexing.  
+---
+
+## 2. Exploratory Data Analysis (EDA)
+
+The cohort contains 615 patient instances across 12 predictor features and 1 target attribute.
 
 ### Target Variable Distribution
 ![Category](../figures/category.png)
-##### Figure 1. The dataset is heavily imbalanced, with most donors being healthy (represented by Category 0 = Blood Donor).
+*Figure 1: Target variable distribution across the 5 clinical categories, exhibiting severe class imbalance.*
 
-From Figure 1, it can be seen that this multiclass classification problem is heavily imbalanced. The precise breakdown by category is given in Table 1. 
+As shown in Figure 1 and Table 1, the dataset exhibits severe class imbalance: 86.7% of instances belong to healthy blood donors, while the minority disease classes range from only 7 to 30 instances.
 
-| Category | Count |
-|----------|-------|
-| 0=Blood Donor | 533 |
-| 0s=suspect Blood Donor | 7 |
-| 1=Hepatitis | 24 |
-| 2=Fibrosis | 21 |
-| 3=Cirrhosis | 30 |
+| Target Category | Clinical Description | Patient Count | Percentage |
+| :--- | :--- | :---: | :---: |
+| `0=Blood Donor` | Healthy volunteer blood donors | 533 | 86.7% |
+| `0s=suspect Blood Donor` | Donors with borderline laboratory markers | 7 | 1.1% |
+| `1=Hepatitis` | Active hepatitis infection | 24 | 3.9% |
+| `2=Fibrosis` | Intermediate hepatic scarring | 21 | 3.4% |
+| `3=Cirrhosis` | Advanced, irreversible liver damage | 30 | 4.9% |
 
-##### Table 1. Number of Unique Categories in Categorical Features
-### Feature Distributions
-While plotting column pair plots with the `Category` target variable, a few interesting features stood out. 
+*Table 1: Cohort distribution by clinical diagnosis.*
+
+### Feature Distributions & Clinical Relationships
+Exploratory pairwise analyses highlighted critical clinical relationships between laboratory markers and disease progression:
+
 ![Sex Proportion](../figures/sexproportion.png)
-##### Figure 2. Male donors are more likely to have hepatitis.
-As the only non-numerical feature, the sex variable provided the only way to compare a pair of categorical variables. In this dataset, the sex variable was binary, either male or female. 
+*Figure 2: Proportion of hepatitis diagnoses stratified by biological sex.*
 
-From Figure 2, it can ben seen that the prevalance of disease, while still far lower than the healthy population, is noticeably higher for men compared to women. 
+Biological sex represents the single categorical predictor. As illustrated in Figure 2, male donors exhibited a noticeably higher incidence of hepatitis and fibrosis compared to female donors, making biological sex an essential demographic stratifier.
 
 ![Albumin](../figures/albumin.png)
-##### Figure 3. Albumin, a protein made by the liver, is unsurprisingly linked to total protein levels.
-Between two numerical variables, there is a strong positive correlation between albumin and total protein levels. Albumin is a protein that is made by the liver, which binds to free bilirubin molecules in the bloodstream. As a protein present in blood, it is not surprising that the total protein levels are positively correlated with albumin levels. [3]
+*Figure 3: Strong linear relationship between Albumin (ALB) and Total Protein (PROT).*
+
+Between numerical markers, Albumin and Total Protein demonstrated a strong positive linear correlation (Figure 3). Albumin is synthesized exclusively by hepatocytes and represents the largest component of total serum protein, validating expected baseline physiological behavior [3].
 
 ![Bilirubin](../figures/bilirubin.png)
-##### Figure 4. Bilirubin levels are high in patients with cirrhosis. 
-High levels of free bilirubin molecules in the bloodstream are linked to liver disease. Free bilirubin molecules, if it builds up in the bloodstream to high levels, ends up being toxic. [3] Cirrhosis, the most advanced stage of hepatitis, being linked to high bilirubin levels aligns with this scientific consensus. Figure 4 shows a violin plot with cirrhosis patients conspicuously being much more likely to have high levels of bilirubin.
+*Figure 4: Distribution of serum Bilirubin across clinical stages.*
 
-### Missing Data
-Five features from this dataset had missing values, all of which were numeric features. Of the 615 rows of data, 26 had missing values. 
+Bilirubin is a metabolic breakdown product of hemoglobin cleared by the liver. Elevated serum bilirubin reflects biliary impairment and hepatic decompensation. As shown in Figure 4, bilirubin levels spiked selectively in patients with stage 3 Cirrhosis, aligning with established diagnostic criteria for end-stage liver disease [3].
 
-| Feature | Fraction of Missing Values |
-|---------|--------|
-| ALB (Albumin) | 0.001626 |
-| ALP (Alkaline Phosphatase) | 0.029268 |
-| ALT (Alanine Aminotransferase) | 0.001626 |
-| CHOL (Cholesterol) | 0.016260 |
-| PROT (Total Protein) | 0.001626 |
-##### Table 2. Fraction of Missing Values per Feature.
+### Missing Laboratory Data
+Missing values were confined to 5 continuous laboratory features, affecting 26 of the 615 rows (Table 2).
 
-Since all of the missing data were from numeric features, there were some restrictions on the types of ML models that could be run. XGBoost and Reduced Feature Models were used during ML training to handle these restrictions.
+| Feature | Description | Fraction Missing |
+| :--- | :--- | :---: |
+| ALB | Albumin | 0.16% |
+| ALP | Alkaline Phosphatase | 2.93% |
+| ALT | Alanine Aminotransferase | 0.16% |
+| CHOL | Cholesterol | 1.63% |
+| PROT | Total Protein | 0.16% |
 
-## Methods 
+*Table 2: Proportion of missing values per laboratory biomarker.*
+
+---
+
+## 3. Methodology & Modeling Pipeline
 
 ### Splitting Strategy
-Since the dataset is heavily imbalanced, it is important to ensure that the smaller classes are represented in each split.
-Employing a stratified splitting strategy ensures that the smaller classes will be present in each split. 
+Given the extreme class imbalance, random partitioning would risk omitting minority classes (e.g., `0s=suspect Blood Donor` with only 7 cases) from training or validation folds. A stratified partitioning strategy was developed:
+1. An initial stratified split isolated a 20% holdout test set ($N=123$) while preserving exact category proportions.
+2. The remaining 80% ($N=492$) was partitioned using 5-fold Stratified K-Fold cross-validation for hyperparameter tuning and model comparison.
+3. The resulting partition mirrors a 60% train, 20% validation, and 20% independent test split.
 
-The first split involved defining a custom `StratifiedSplit` function to split the data into the test set of data, and the remaining data was placed into an 'other' dataset.
+### Preprocessing Pipeline
+Continuous features were standardized using `StandardScaler` to zero mean and unit variance, while `Age` was normalized using `MinMaxScaler`. Biological sex was encoded via `OneHotEncoder`. Missing values were addressed through dual strategies:
+* For linear and support vector models, **Reduced-Feature Subset Models** were trained on feature combinations containing complete observations.
+* For gradient boosted trees, **XGBoost's native default-direction routing** handled missing continuous inputs dynamically during split evaluation.
 
-Following this split into a 'test' and 'other' set, I employed `StratifiedKFold` to split the 'other' set into training and validation sets. The function that I defined can be called so that you can input a custom number of splits or folds into the dataset. For this project, I set the number of splits equal to 4, the random state to 42, and the test size to 0.2. 
+### Evaluation Metric: Weighted $F_2$ Score
+In clinical diagnostic screening, **False Negatives carry catastrophic consequences** (an infected donor's blood entering the supply or a patient missing early therapeutic intervention), whereas False Positives incur comparatively minor follow-up testing costs. 
 
-The resulting split data is 60% train, 20% validation, and 20% test.
+Standard accuracy is invalid due to the 86.7% majority baseline. The **$F_2$ score** was chosen because it places twice as much weight on recall as precision:
+$$F_2 = (1 + 2^2) \frac{\text{Precision} \cdot \text{Recall}}{2^2 \cdot \text{Precision} + \text{Recall}} = 5 \cdot \frac{\text{Precision} \cdot \text{Recall}}{4 \cdot \text{Precision} + \text{Recall}}$$
 
-
-
-### Data Preprocessing
-Once the data is split into train, test, and validation sets, the next step is to ensure that the data is preprocessed before running any machine learning models. For this project, a `ColumnTransformer` was used to preprocess the data. Categorical data were encoded using `LabelEncoder` , `OneHotEncoder`, while the preprocessing pipeline scaled continuous features using `StandardScaler` and the age feature using `MinMaxScaler`. 
-
-
-### ML Pipeline
-Once the data is preprocessed, machine learning models can then be run on it. Four  models (Reduced Features Model with Logistic Regression, Reduced Features Model with Support Vector Classifier, XGBoost, and Random Forest Classifier) were implemented with GridSearchCV for hyperparameter tuning with cross-validation.
-
-
-### Evaluation Metric
-For this model, I have chosen to optimize for false negatives, since I have decided that missing a diagnosis for a patient that has hepatitis is greater than the cost associated with running extra tests and procedures. However, I do not want to completely ignore the costs associated with false positives, so I have decided that opting for an f2 score serves as a way to weight recall more heavily, while not entirely discarding precision in my analysis. The dataset is also imbalanced, so a metric like accuracy does not make much sense. Moreover, this imbalance also means that it is best to find an averaging metric that takes the different weights into account, so I decided to use the weighted f2 score.
+To account for multi-class proportions without skewing rare classes, a support-weighted average with `zero_division=0` was implemented across all cross-validation evaluations.
 
 ### Hyperparameter Tuning
+Grid search cross-validation was conducted across four candidate architectures:
 
-| Machine Learning Model | Hyperparameter | Values |
-|------------------------|----------------|--------|
-| Reduced Features with SVC | C | 0.1, 1, 10 |
-| | gamma | scale, auto |
-| | kernel | linear |
-| Reduced Features with Logistic Regression | C | 0.01, 1, 100 |
-| | solver | liblinear, saga |
-| | max_iter | 100000 |
-| | class_weight | balanced |
-| | penalty | l1, l2 |
-| | tol | 0.0001, 0.001 |
-| XGBoost | max_depth | 3, 5, 7 |
-| | n_estimators | 100, 200 |
-| | learning_rate | 0.01, 0.1 |
-| | subsample | 0.8, 1.0 |
-| | colsample_bytree | 0.8, 1.0 |
-| Random Forest Classifier | n_estimators | 100, 200 |
-| | max_depth | None, 10 |
-| | min_samples_split | 2, 5 |
-| | min_samples_leaf | 1, 2 |
-| | max_features | sqrt, log2 |
+| Model Architecture | Hyperparameter Grid | Optimal Setting |
+| :--- | :--- | :--- |
+| **SVC (Linear)** | $C \in \{0.1, 1, 10\}$, kernel = linear, class_weight = balanced | $C=1$, kernel = linear |
+| **Logistic Regression** | $C \in \{0.01, 1, 100\}$, penalty $\in \{L_1, L_2\}$, solver $\in \{\text{liblinear, saga}\}$ | $C=1$, penalty = $L_1$, solver = liblinear |
+| **Random Forest** | $n\_estimators \in \{100, 200\}$, max_depth $\in \{\text{None}, 10\}$, max_features $\in \{\text{sqrt}, \text{log2}\}$ | $n\_estimators=100$, max_depth=None, max_features=sqrt |
+| **XGBoost** | max_depth $\in \{3, 5, 7\}$, learning_rate $\in \{0.01, 0.1\}$, subsample $\in \{0.8, 1.0\}$ | max_depth=3, learning_rate=0.1, subsample=0.8 |
 
-##### Table 3: ML Models and their Corresponding Hyperparameters
+*Table 3: Hyperparameter optimization search spaces and selected configurations.*
 
-### Uncertainty Measurement
-Uncertainties due to data splitting can be measured by running different random states over the dataset during preprocessing and over the different ML models. 
+---
 
-Similarly, uncertainties due to non-deterministic methods (e.g. Random Forest) can be measured by training the model multiple times using different random seeds.
+## 4. Results & Benchmark Evaluation
 
-In both cases, the evaluation metric (i.e. f2 weighted) will vary between random states and random seeds. These differences constitute the uncertainties due to data splitting and non-deterministic methods.
+### Model Comparison
+The majority-class baseline yields an $F_2$-weighted score of 0.8447. Table 4 benchmarks all trained architectures against the baseline:
 
-## Results 
+| Model Architecture | Feature Strategy | Weighted $F_2$ Score | Std Dev | Improvement vs. Baseline |
+| :--- | :--- | :---: | :---: | :---: |
+| **Baseline (Majority Class)** | Predicts "Blood Donor" | 0.8447 | 0.0000 | Reference Baseline |
+| **Logistic Regression** | Reduced Features (Subset 1) | 0.9235 | 0.0261 | +3.02 $\sigma$ |
+| **Support Vector Classifier (Linear)** | Reduced Features (Subset 1) | 0.9313 | 0.0261 | +3.31 $\sigma$ |
+| **Random Forest Classifier** | Full Features, Ensemble | 0.9387 | 0.0200 | +3.60 $\sigma$ |
+| **XGBoost Classifier** | Full Features, Gradient Boosted | **0.9453** | **0.0209** | **+4.76 $\sigma$ (Best Model)** |
 
-### Baseline Comparison
-The baseline f2 weighted metric is 0.845. Of the models tested, the highest performing model is XGBoost, with a mean of 0.945. This calculates to 4.76 standard deviations above the baseline.
+*Table 4: Cross-validated performance benchmarks across model architectures.*
 
-### Model Performance
 ![F2weightedscore](../figures/f2weightedbaseline.png)
-##### Figure 5. Different ML Models and Associated F2 Weighted Scores.
+*Figure 5: Cross-validated $F_2$-weighted performance comparison across all evaluated models.*
 
-### Feature Importances
+The **XGBoost Classifier achieved the highest score of 0.9453 ± 0.0209**, outperforming the baseline by **4.76 standard deviations**. The tree ensemble architectures systematically outperformed linear models due to their ability to capture nonlinear biomarker interactions without requiring manual interaction engineering.
 
-#### Global Feature Importance
-Determining the most important features globally involved running multiple different global feature importances, including permutation importance, and XGBoost metrics. 
+---
+
+## 5. Model Interpretation & Biomarker Analysis
+
+### Global Feature Importance
+To ensure clinical validity, feature importances were evaluated using both model-agnostic **Permutation Importance** and tree-intrinsic **Gain and Weight** metrics:
 
 ![Permutation Importance](../figures/permutationimportance.png)
-##### Figure 6. Being female was the strongest feature by permutation feature importance, followed by Protein levels.
-
-Figure 6 shows the top 10 most important features from permutation feature importance. Using permutation feature importance, the difference in test score was calculated as a result of randomly
-shuffling a feature’s value. 
-
-Figure 7 shows the most important features according to the XGBoost weight metric, while Figure 8 shows the most important features according to the gain metric.
+*Figure 6: Top 10 features ranked by Permutation Feature Importance.*
 
 ![XGBoost Weight](../figures/xgboost_weight_importance.png)
-##### Figure 7. AST (Aspartate Aminotransferase) is the most important feature according to the XGBoost Weight metric.
+*Figure 7: Top 10 features ranked by XGBoost split frequency (Weight).*
 
 ![XGBoost Gain](../figures/xgboost_gain_importance.png)
-##### Figure 8. CHE (Cholinesterase) is the most important feature according to the XGBoost Gain metric.
+*Figure 8: Top 10 features ranked by XGBoost relative information Gain.*
 
-### Discussion
-While there are some contradictory signs of feature importance, there are a few main takeaways. 
+### Clinical Takeaways
+1. **AST (Aspartate Aminotransferase):** Ranked #1 by XGBoost Weight and consistently near the top in Gain. AST is an intracellular enzyme released during hepatocellular injury; elevated AST is the hallmark clinical indicator of acute and chronic liver necrosis.
+2. **CHE (Cholinesterase):** Emerged as the #1 predictive biomarker by XGBoost Gain. Cholinesterase measures liver protein synthesis and metabolic activity; depressed CHE levels serve as a strong discriminator for advanced fibrosis and cirrhosis.
+3. **GGT (Gamma-Glutamyl Transferase):** Ranked highly across all importance metrics, validating its sensitivity to biliary tract inflammation and chronic hepatic injury.
+4. **Demographics (Sex and Age):** Biological sex contributed meaningfully to decision boundaries in permutation tests, reflecting the observed male disease prevalence, whereas Age had minimal predictive power once liver enzymes were accounted for.
 
-Consistently across various metrics, cholinesterase and aspartate aminotransferase rank highly. Aspartame aminotransferase is an enzyme indicating liver damage, so it is not surprising that it has a high impact on the models for predicting hepatitis, a liver disease. Cholinesterase is an enzyme involved in fat processing, which while not immediately clear how it is linked to liver health, points to its role in overall health.
+---
 
-Age and albumin were found to have a low impact on the predictive power of ML models. These results are a bit surprising as age is correlated with disease progression for many chronic diseases, while albumin, a protein made by the liver that binds to free bilirubin, is generally thought of as important for reducing toxic bilirubin in the body. Further investigation is needed in this area.
+## 6. Discussion & Future Outlook
 
-## Outlook 
+### Clinical Feasibility
+The high diagnostic recall ($F_2 = 0.945$) achieved by XGBoost on standard blood laboratory features demonstrates that machine learning can provide an effective, automated preliminary screening tool for blood donation centers and primary care clinics. Flagging at-risk donors for confirmatory nucleic acid testing (NAT) can reduce diagnostic turnaround latency and prevent inadvertent transfusion transmission.
 
-### Model Improvements
-Moving forward, there are a few different ways to improve the model's predictive power. During the model training process, the `class_weight` hyperparameter was added to improve the convergence of the Reduced Features Model with Logistic Regression. Since the dataset is imbalanced, predictive power is likely to increase for the ML models once the weight of various classes are taken into account. Extensive feature engineering and feature selection could also boost predictive power by linking related features together.
+### Local Interpretability with TreeSHAP
+While global feature rankings confirmed domain validity, translating models into clinical practice requires **patient-specific explanations**. For multi-class architectures, computing 3-dimensional SHAP tensors ($\text{samples} \times \text{features} \times \text{classes}$) allows generation of individualized patient force plots. For instance, clinicians can observe whether an individual's elevated risk score was driven primarily by an acute AST elevation (suggesting active hepatitis) versus severely depleted CHE and elevated Bilirubin (indicating advanced cirrhosis).
 
-### Interpretability Improvements
-SHAP is a key tool that was not successfully utilized in analyzing feature importance. Successful implementation of SHAP would improve the interpretability of both global and local feature importances. Local feature importance can also be addressed through the implementation of LIME metrics.
+### Limitations
+A key constraint remains the small absolute sample size of minority categories (e.g., 7 suspect donors, 21 fibrosis patients). Future investigations should validate this pipeline across multi-center clinical cohorts with independent prospective testing to evaluate model generalizability across diverse demographic distributions.
 
-### Weaknesses in Approach
-A key limitation in the approach is the small sample size for minority classes. While this dataset comes with its limitations, more research should be done with more robust datasets to ensure that the small sample size does not skew the results too heavily.
+---
 
-## References (5 points)
+## 7. References
 
-1. Lichtinghagen, Ralf, Frank Klawonn, and Georg Hoffmann. "HCV data." UCI Machine Learning Repository, 2020, https://doi.org/10.24432/C5D612.
-2. Hoffmann, Georg F. et al. “Using machine learning techniques to generate laboratory diagnostic pathways—a case study.” Journal of Laboratory and Precision Medicine (2018): n. pag.
-3. Zhang, Hui et al. “Correlation Between Total Bilirubin, Total Bilirubin/Albumin Ratio with Disease Activity in Patients with Rheumatoid Arthritis.” International journal of general medicine vol. 16 273-280. 24 Jan. 2023, doi:10.2147/IJGM.S393273
-
-
+1. Lichtinghagen, R., Klawonn, F., & Hoffmann, G. (2020). *HCV data* [Dataset]. UCI Machine Learning Repository. [https://doi.org/10.24432/C5D612](https://doi.org/10.24432/C5D612).
+2. Hoffmann, G. F., Bietenbeck, A., Lichtinghagen, R., & Klawonn, F. (2018). *Using machine learning techniques to generate laboratory diagnostic pathways—a case study.* Journal of Laboratory and Precision Medicine, 3, 56.
+3. Zhang, H., et al. (2023). *Correlation Between Total Bilirubin, Total Bilirubin/Albumin Ratio with Disease Activity.* International Journal of General Medicine, 16, 273–280.

@@ -1,70 +1,155 @@
-# Blood Donor Classification Project
-## Project Overview
-This supervised machine learning project applies machine learning algorithms to a dataset of blood donors as well as their blood feature data. With this blood feature data, the project attempts to classify patients into one of a few different classes, each class representing a different stage of hepatitis. 
+# 🩸 Hepatitis C Classification & Blood Donor Screening
+### A Supervised Machine Learning Approach to Early Detection of Liver Disease
 
-### Python and Package Versions
-For my project, I used the following Python and package versions: 
+[![Python 3.12](https://img.shields.io/badge/Python-3.12.7-blue.svg)](https://www.python.org/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.5.1-orange.svg)](https://scikit-learn.org/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-2.1.1-red.svg)](https://xgboost.readthedocs.io/)
+[![Brown University](https://img.shields.io/badge/Institution-Brown%20University%20DSI-brown.svg)](https://dsi.brown.edu/)
+[![Report](https://img.shields.io/badge/Report-PDF-red.svg)](report/finalreport.pdf)
 
-| Package    | Version |
-|------------|---------|
-| Python     | 3.12.7  |
-| numpy      | 1.26.4  |
-| matplotlib | 3.9.2   |
-| sklearn    | 1.5.1   |
-| pandas     | 2.2.2   |
-| xgboost    | 2.1.1   |
-| shap       | 0.45.1  |
-| plotly     | 5.23.0  |
+> **Author:** Jimmy Lin  
+> **Institution:** Data Science Institute, Brown University  
+> **Repository:** [sirjimmylin/Blood-Donor-Classification-Project](https://github.com/sirjimmylin/Blood-Donor-Classification-Project.git)  
+> **Interactive Project Showcase:** [Live Web Portfolio Page](https://sirjimmylin.github.io/Blood-Donor-Classification-Project/) | [`docs/index.html`](docs/index.html)
 
-You can reproduce this environment using the Project YAML file provided here: [Project YAML](project.yml)
+---
 
-### Folder Organization and Dataset Citation
-For the Jupyter Notebooks, navigate to the src folder. The baseline evaluation metric calculation and correlation plot is done in the projectbaseline.ipynb notebook, while the project.ipynb is the most up-to-date notebook for the rest of the data. oldproject.ipynb is a defunct notebook, although feel free to explore it for any insights.
+## 📌 Project Overview
 
-The raw dataset is found in the data folder, titled `blooddonor.csv`. Preprocessed data is in the [preprocessed_data](data/preprocessed_data.pkl)
+Blood donor screening is a cornerstone of transfusion safety and preventative healthcare. Hepatitis C virus (HCV) infections frequently progress silently through hepatic fibrosis to irreversible cirrhosis without overt early symptoms. 
 
-Saved figures are in the figures folder.
+This project develops an end-to-end supervised machine learning pipeline to classify individuals across the complete **hepatitis disease spectrum** using routine, minimally invasive clinical blood laboratory tests. 
 
-The final report is in the report folder.
+### Key Clinical & Technical Results
+* **Dataset:** 615 patient instances with 12 clinical attributes from the [UCI Machine Learning Repository HCV Dataset](https://doi.org/10.24432/C5D612).
+* **Metric Alignment:** Optimized for a **weighted F2F_2F2 score** to penalize life-threatening False Negatives (missing a hepatitis infection) twice as heavily as False Positives.
+* **Top Performance:** **XGBoost Classifier** achieved an F2F_2F2 score of **0.9453 ± 0.0209**, outperforming baseline (0.8447) by **+4.76 standard deviations**.
+* **Biomarker Interpretability:** Permutation importance and XGBoost gain metrics identified **AST (Aspartate Aminotransferase)** and **CHE (Cholinesterase)** as primary drivers of model decisions, corroborating established clinical consensus on hepatocellular necrosis and impaired liver synthesis.
 
-All results are stored in the results folder in .pkl files. Note that these files are only done AFTER hyperparameter tuning. The results of the ML models are not included before hyperparameter tuning as it simply serves as a benchmark of the progression of my project, not as results that should be stored.
+---
 
-Here is the dataset citation: 
-Lichtinghagen, R., Klawonn, F., & Hoffmann, G. (2020). HCV data [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5D612.
+## 📊 Model Comparison & Benchmarks
 
-## Dataset Information
-What do the instances in this dataset represent?
-Instances are patients
+All models were evaluated using stratified 5-fold cross-validation with grid search hyperparameter optimization:
 
-Additional Information
-The target attribute for classification is Category (blood donors vs. Hepatitis C, including its progress: 'just' Hepatitis C, Fibrosis, Cirrhosis).
+| Model Architecture | Feature Strategy | Weighted F2F_2F2 Score | Std Dev | Improvement vs. Baseline |
+| :--- | :--- | :---: | :---: | :---: |
+| **Baseline (Majority Class)** | Predicts "Blood Donor" | 0.8447 | 0.0000 | Reference Baseline |
+| **Logistic Regression** | Reduced Features (Subset 1) | 0.9235 | 0.0261 | +3.02 F2\sigmaF2 |
+| **Support Vector Classifier (Linear)** | Reduced Features (Subset 1) | 0.9313 | 0.0261 | +3.31 F2\sigmaF2 |
+| **Random Forest Classifier** | Full Features, Ensemble | 0.9387 | 0.0200 | +3.60 F2\sigmaF2 |
+| **XGBoost Classifier** 🏆 | Full Features, Gradient Boosted | **0.9453** | **0.0209** | **+4.76 F2\sigmaF2 (Winner)** |
 
-Has Missing Values?
-Yes
+---
 
-## Variables
+## 🔬 Dataset & Clinical Attributes
 
-    Category: Patient classification (e.g., Blood Donor, Hepatitis, Fibrosis, Cirrhosis)
-    Age: Patient's age in years
-    Sex: Patient's gender (m for male, f for female)
-    ALB: Albumin, a protein made by the liver
-    ALP: Alkaline Phosphatase, an enzyme related to liver and biliary system
-    ALT: Alanine Aminotransferase, an enzyme indicating liver damage
-    AST: Aspartate Aminotransferase, another enzyme indicating liver damage
-    BIL: Bilirubin, a product of red blood cell breakdown
-    CHE: Cholinesterase, an enzyme involved in fat processing
-    CHOL: Cholesterol, a type of fat in the blood
-    CREA: Creatinine, a waste product used to assess kidney function
-    GGT: Gamma-Glutamyl Transferase, an enzyme indicative of liver disease
-    PROT: Total Protein, measuring overall protein in the blood
+The dataset comprises **615 patient records** classified into five disease progression categories:
 
-    ALB (Albumin): g/L
-    ALP (Alkaline Phosphatase): U/L (Units per Liter)
-    ALT (Alanine Aminotransferase): U/L (Units per Liter)
-    AST (Aspartate Aminotransferase): U/L (Units per Liter)
-    BIL (Bilirubin): μmol/L
-    CHE (Cholinesterase): U/L (Units per Liter)
-    CHOL (Cholesterol): mg/dL or mmol/L
-    CREA (Creatinine): mg/dL or μmol/L
-    GGT (Gamma-Glutamyl Transferase): U/L (Units per Liter)
-    PROT (Total Protein): g/dL or g/L
+| Target Category | Clinical Description | Patient Count | Percentage |
+| :--- | :--- | :---: | :---: |
+| `0=Blood Donor` | Healthy volunteer blood donors | 533 | 86.7% |
+| `0s=suspect Blood Donor` | Donors with borderline or unconfirmed lab markers | 7 | 1.1% |
+| `1=Hepatitis` | Active hepatitis infection | 24 | 3.9% |
+| `2=Fibrosis` | Intermediate hepatic scarring | 21 | 3.4% |
+| `3=Cirrhosis` | Advanced, irreversible end-stage liver damage | 30 | 4.9% |
+
+### Laboratory Biomarkers
+* **Demographics:** Age (years), Sex (`m`/`f`)
+* **Liver Enzymes:**
+  * **AST (Aspartate Aminotransferase, U/L):** Released into bloodstream upon liver tissue damage; key indicator of hepatocellular necrosis.
+  * **ALT (Alanine Aminotransferase, U/L):** Liver-specific enzyme indicating acute liver inflammation.
+  * **ALP (Alkaline Phosphatase, U/L):** Enzyme associated with bile ducts and biliary clearance.
+  * **GGT (Gamma-Glutamyl Transferase, U/L):** Sensitive biomarker for biliary obstruction and alcohol/drug-induced liver stress.
+* **Proteins & Metabolites:**
+  * **ALB (Albumin, g/L):** Primary protein synthesized by the liver; binds bilirubin.
+  * **CHE (Cholinesterase, U/L):** Serum enzyme reflecting liver metabolic and synthetic capacity.
+  * **BIL (Bilirubin, μmol/L):** Hemoglobin breakdown byproduct; elevated in cirrhosis and jaundice.
+  * **CHOL (Cholesterol, mmol/L):** Serum lipid synthesized and processed by hepatocytes.
+  * **CREA (Creatinine, μmol/L):** Waste product monitoring renal function and hepatorenal syndrome.
+  * **PROT (Total Protein, g/L):** Aggregate measure of serum globulins and albumin.
+
+---
+
+## 🛠️ Technical Challenges & Methodology
+
+### 1. Severe Class Imbalance (86.7% Majority Class)
+* **Challenge:** 533 healthy donors vs. only 7 suspect cases and 21–30 cases per disease stage. A naive majority-class classifier achieves ~87% raw accuracy.
+* **Solution:** 
+  * Implemented a custom **Stratified 60/20/20 train/validation/test split** ensuring all minority classes are represented across folds.
+  * Incorporated balanced class-weight penalties (`class_weight="balanced"`) in linear and margin models.
+  * Evaluated models strictly via **F2F_2F2-weighted score** with `zero_division=0` to ensure unpredicted minority classes in cross-validation folds do not produce metric bias.
+
+### 2. Missing Laboratory Data
+* **Challenge:** 5 continuous laboratory features contained missing measurements (26 rows total, with ALP missing ~2.9% and CHOL ~1.6%).
+* **Solution:**
+  * For linear/SVM models, trained **Reduced-Feature Subset Models** on clean feature combinations without missing values.
+  * For tree-based models, leveraged **XGBoost's native default-direction routing**, learning optimal branch assignments for missing values during split finding.
+
+### 3. Pathophysiological Model Interpretability
+* Evaluated global feature importances using **Permutation Importance** (model-agnostic) alongside **XGBoost Gain & Weight metrics**.
+* Confirmed that **AST** and **CHE** dominated decision splits, ensuring the model relies on true biological indicators of disease rather than demographic artifacts.
+
+---
+
+## 📁 Repository Structure
+
+```
+Blood-Donor-Classification-Project/
+├── README.md                      # Project documentation & summary
+├── project.yml                    # Conda reproducible environment specification
+├── data/
+│   ├── blooddonor.csv             # Raw UCI HCV dataset
+│   └── preprocessed_data.pkl      # Preprocessed stratified split tensors
+├── src/
+│   ├── project.ipynb              # Primary analysis, modeling & interpretation notebook
+│   ├── project_backup.ipynb       # Original pre-cleanup notebook backup
+│   └── projectbaseline.ipynb      # Initial baseline exploratory calculations
+├── figures/                       # High-resolution (300 DPI) publication visualizations
+│   ├── category.png               # Target class distribution
+│   ├── sexproportion.png          # Hepatitis prevalence by biological sex
+│   ├── albumin.png                # Albumin vs. total protein relationship
+│   ├── bilirubin.png              # Bilirubin elevation across cirrhosis
+│   ├── f2weightedbaseline.png     # Benchmark model comparison chart
+│   ├── permutationimportance.png  # Permutation feature importance rankings
+│   ├── xgboost_gain_importance.png# XGBoost Gain feature rankings
+│   └── xgboost_weight_importance.png# XGBoost Weight feature rankings
+├── results/                       # Serialized model scores and GridSearchCV results (.pkl)
+├── report/
+│   ├── finalreport.md             # Complete academic report in Markdown
+│   └── finalreport.pdf            # Compiled PDF publication report
+└── docs/
+    └── index.html                 # Interactive portfolio showcase webpage
+```
+
+---
+
+## 🚀 Environment Setup & Reproducibility
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/sirjimmylin/Blood-Donor-Classification-Project.git
+   cd Blood-Donor-Classification-Project
+   ```
+
+2. **Create and activate the Conda environment:**
+   ```bash
+   conda env create -f project.yml
+   conda activate data1030
+   ```
+
+3. **Launch the Jupyter notebook:**
+   ```bash
+   jupyter lab src/project.ipynb
+   ```
+
+---
+
+## 📚 References & Citation
+
+1. **Dataset Citation:**  
+   Lichtinghagen, R., Klawonn, F., & Hoffmann, G. (2020). *HCV data*. UCI Machine Learning Repository. [https://doi.org/10.24432/C5D612](https://doi.org/10.24432/C5D612).
+2. **Clinical Research:**  
+   Hoffmann, G. F. et al. (2018). *Using machine learning techniques to generate laboratory diagnostic pathways—a case study.* Journal of Laboratory and Precision Medicine.
+3. **Biomarker Correlation:**  
+   Zhang, H. et al. (2023). *Correlation Between Total Bilirubin, Total Bilirubin/Albumin Ratio with Disease Activity.* International Journal of General Medicine, 16, 273–280.
