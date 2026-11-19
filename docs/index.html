@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hepatitis C Classification | Jimmy Lin</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-card: #1c2128;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --accent-secondary: #3fb950;
+            --accent-warning: #d29922;
+            --accent-danger: #f85149;
+            --border: #30363d;
+            --gradient-start: #1f6feb;
+            --gradient-end: #58a6ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            padding: 80px 0 60px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(31, 111, 235, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(63, 185, 80, 0.1) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 20px;
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+            color: var(--accent);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 32px;
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+
+        .hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .hero-meta-item svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-secondary);
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(31, 111, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Section */
+        .section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 40px;
+        }
+
+        /* Result Cards */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 24px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .result-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .result-card .value {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .result-card .value.green { color: var(--accent-secondary); }
+        .result-card .value.yellow { color: var(--accent-warning); }
+
+        .result-card .label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Pipeline */
+        .pipeline {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            overflow-x: auto;
+            padding-bottom: 16px;
+            margin-bottom: 40px;
+        }
+
+        .pipeline-step {
+            flex: 1;
+            min-width: 140px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px 16px;
+            text-align: center;
+            position: relative;
+        }
+
+        .pipeline-step + .pipeline-step {
+            margin-left: 36px;
+        }
+
+        .pipeline-step + .pipeline-step::before {
+            content: '→';
+            position: absolute;
+            left: -28px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .pipeline-step .step-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            border-radius: 50%;
+            background: rgba(88, 166, 255, 0.15);
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .pipeline-step .step-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .pipeline-step .step-detail {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Model Comparison Table */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 14px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        td {
+            font-size: 0.95rem;
+        }
+
+        tr.highlight {
+            background: rgba(88, 166, 255, 0.05);
+        }
+
+        tr.highlight td {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .best-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--accent-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* Feature Importance */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+
+        .feature-bar-container {
+            margin-bottom: 12px;
+        }
+
+        .feature-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
+        }
+
+        .feature-bar-label span:last-child {
+            color: var(--text-secondary);
+        }
+
+        .feature-bar {
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .feature-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            transition: width 0.5s ease;
+        }
+
+        .feature-bar-fill.green {
+            background: linear-gradient(90deg, #196c2e, #3fb950);
+        }
+
+        /* Challenges Section */
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .challenge-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .challenge-card h3 {
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .challenge-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tech-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .tech-tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero-meta { gap: 16px; }
+            .pipeline { flex-direction: column; align-items: stretch; }
+            .pipeline-step + .pipeline-step { margin-left: 0; margin-top: 24px; }
+            .pipeline-step + .pipeline-step::before { 
+                left: 50%; top: -20px; transform: translateX(-50%) rotate(90deg); 
+            }
+            .results-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-badge">Machine Learning &middot; Healthcare</span>
+            <h1>Hepatitis C Classification from Blood Donor Data</h1>
+            <p>
+                A supervised machine learning project applying XGBoost, Random Forest, 
+                SVC, and Logistic Regression to classify patients into different stages 
+                of Hepatitis C using clinical blood laboratory measurements.
+            </p>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    Jimmy Lin
+                </div>
+                <div class="hero-meta-item">
+                    <svg viewBox="0 0 16 16"><path d="M1.5 14.25c0 .138.112.25.25.25H4v-1.25a.75.75 0 01.75-.75h2.5a.75.75 0 01.75.75v1.25h2.25a.25.25 0 00.25-.25V1.75a.25.25 0 00-.25-.25h-8.5a.25.25 0 00-.25.25v12.5zM1.75 0A1.75 1.75 0 000 1.75v12.5C0 15.216.784 16 1.75 16H6v-1.25a.25.25 0 01.25-.25h1.5a.25.25 0 01.25.25V16h4.25A1.75 1.75 0 0014 14.25V1.75A1.75 1.75 0 0012.25 0h-8.5zM3 3.75a.75.75 0 01.75-.75h.5a.75.75 0 010 1.5h-.5A.75.75 0 013 3.75zM3.75 6a.75.75 0 000 1.5h.5a.75.75 0 000-1.5h-.5zM3 10.75a.75.75 0 01.75-.75h.5a.75.75 0 010 1.5h-.5a.75.75 0 01-.75-.75zM7.75 3a.75.75 0 000 1.5h.5a.75.75 0 000-1.5h-.5zM7 6.75a.75.75 0 01.75-.75h.5a.75.75 0 010 1.5h-.5A.75.75 0 017 6.75zM7.75 10a.75.75 0 000 1.5h.5a.75.75 0 000-1.5h-.5z"/></svg>
+                    Data Science Institute, Brown University
+                </div>
+                <div class="hero-meta-item">
+                    <svg viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+                    UCI HCV Dataset
+                </div>
+            </div>
+            <div class="cta-group">
+                <a href="https://github.com/sirjimmylin/Blood-Donor-Classification-Project" class="btn btn-primary" target="_blank">
+                    <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    View on GitHub
+                </a>
+                <a href="https://github.com/sirjimmylin/Blood-Donor-Classification-Project/blob/main/report/finalreport.pdf" class="btn btn-secondary" target="_blank">
+                    <svg viewBox="0 0 16 16"><path d="M3.75 0h8.5A1.75 1.75 0 0114 1.75v12.5A1.75 1.75 0 0112.25 16h-8.5A1.75 1.75 0 012 14.25V1.75A1.75 1.75 0 013.75 0zm0 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25V1.75a.25.25 0 00-.25-.25h-8.5zM5 4.75A.75.75 0 015.75 4h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 015 4.75zM5.75 7a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-4.5zM5 10.75a.75.75 0 01.75-.75h2.5a.75.75 0 010 1.5h-2.5a.75.75 0 01-.75-.75z"/></svg>
+                    Read Full Report
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Results -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Key Results</h2>
+            <p class="section-subtitle">Performance of the best model (XGBoost) compared to baseline</p>
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="value green">0.945</div>
+                    <div class="label">F2 Weighted Score</div>
+                </div>
+                <div class="result-card">
+                    <div class="value">4.76σ</div>
+                    <div class="label">Above Baseline</div>
+                </div>
+                <div class="result-card">
+                    <div class="value yellow">615</div>
+                    <div class="label">Patient Samples</div>
+                </div>
+                <div class="result-card">
+                    <div class="value">4</div>
+                    <div class="label">Models Compared</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ML Pipeline -->
+    <section class="section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <h2 class="section-title">ML Pipeline</h2>
+            <p class="section-subtitle">End-to-end workflow from raw clinical data to model interpretation</p>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">EDA</div>
+                    <div class="step-detail">Box plots, histograms, correlation analysis</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Split</div>
+                    <div class="step-detail">Stratified 60/20/20 train/val/test</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Preprocess</div>
+                    <div class="step-detail">Scaling, encoding, imputation</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Train</div>
+                    <div class="step-detail">LR, SVC, RF, XGBoost</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Tune</div>
+                    <div class="step-detail">GridSearchCV with 5-fold CV</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Interpret</div>
+                    <div class="step-detail">Permutation importance, XGBoost metrics</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Model Comparison -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Model Comparison</h2>
+            <p class="section-subtitle">F2-weighted scores prioritizing recall for medical diagnosis</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Approach</th>
+                            <th>F2 Weighted</th>
+                            <th>Key Hyperparameters</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Baseline</td>
+                            <td>Majority class predictor</td>
+                            <td>0.845</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>SVC</td>
+                            <td>Reduced features, linear kernel</td>
+                            <td>0.931 ± 0.026</td>
+                            <td>C ∈ {0.1, 1, 10}, kernel = linear</td>
+                        </tr>
+                        <tr>
+                            <td>Logistic Regression</td>
+                            <td>Reduced features, balanced weights</td>
+                            <td>0.923</td>
+                            <td>C ∈ {0.01, 1, 100}, penalty ∈ {L1, L2}</td>
+                        </tr>
+                        <tr class="highlight">
+                            <td>XGBoost <span class="best-badge">Best</span></td>
+                            <td>Full features, handles NaN natively</td>
+                            <td>0.945 ± 0.021</td>
+                            <td>max_depth ∈ {3,5,7}, lr ∈ {0.01, 0.1}</td>
+                        </tr>
+                        <tr>
+                            <td>Random Forest</td>
+                            <td>Ensemble, full features</td>
+                            <td>0.939</td>
+                            <td>n_estimators ∈ {100, 200}, max_features ∈ {sqrt, log2}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Importance -->
+    <section class="section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <h2 class="section-title">Feature Importance</h2>
+            <p class="section-subtitle">Which blood markers matter most for predicting hepatitis?</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔬 Permutation Importance</h3>
+                    <div class="feature-bar-container">
+                        <div class="feature-bar-label"><span>Sex (Female)</span><span>Highest</span></div>
+                        <div class="feature-bar"><div class="feature-bar-fill" style="width: 100%;"></div></div>
+                    </div>
+                    <div class="feature-bar-container">
+                        <div class="feature-bar-label"><span>PROT (Total Protein)</span><span>High</span></div>
+                        <div class="feature-bar"><div class="feature-bar-fill" style="width: 78%;"></div></div>
+                    </div>
+                    <div class="feature-bar-container">
+                        <div class="feature-bar-label"><span>CHE (Cholinesterase)</span><span>High</span></div>
+                        <div class="feature-bar"><div class="feature-bar-fill" style="width: 72%;"></div></div>
+                    </div>
+                    <div class="feature-bar-container">
+                        <div class="feature-bar-label"><span>AST (Aspartate Aminotransferase)</span><span>Moderate</span></div>
+                        <div class="feature-bar"><div class="feature-bar-fill" style="width: 55%;"></div></div>
+                    </div>
+                    <div class="feature-bar-container">
+                        <div class="feature-bar-label"><span>GGT (Gamma-Glutamyl Transferase)</span><span>Moderate</span></div>
+                        <div class="feature-bar"><div class="feature-bar-fill" style="width: 45%;"></div></div>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <h3>🌳 XGBoost (Gain)</h3>
+                    <div class="feature-bar-container">
+                        <div class="feature-bar-label"><span>CHE (Cholinesterase)</span><span>Highest</span></div>
+                        <div class="feature-bar"><div class="feature-bar-fill green" style="width: 100%;"></div></div>
+                    </div>
+                    <div class="feature-bar-container">
+                        <div class="feature-bar-label"><span>AST (Aspartate Aminotransferase)</span><span>High</span></div>
+                        <div class="feature-bar"><div class="feature-bar-fill green" style="width: 85%;"></div></div>
+                    </div>
+                    <div class="feature-bar-container">
+                        <div class="feature-bar-label"><span>GGT (Gamma-Glutamyl Transferase)</span><span>High</span></div>
+                        <div class="feature-bar"><div class="feature-bar-fill green" style="width: 68%;"></div></div>
+                    </div>
+                    <div class="feature-bar-container">
+                        <div class="feature-bar-label"><span>ALT (Alanine Aminotransferase)</span><span>Moderate</span></div>
+                        <div class="feature-bar"><div class="feature-bar-fill green" style="width: 48%;"></div></div>
+                    </div>
+                    <div class="feature-bar-container">
+                        <div class="feature-bar-label"><span>BIL (Bilirubin)</span><span>Moderate</span></div>
+                        <div class="feature-bar"><div class="feature-bar-fill green" style="width: 38%;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Challenges -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Challenges & Insights</h2>
+            <p class="section-subtitle">Key obstacles encountered and how they were addressed</p>
+            <div class="challenges-grid">
+                <div class="challenge-card">
+                    <h3>⚖️ Severe Class Imbalance</h3>
+                    <p>87% of samples were healthy Blood Donors. Addressed with stratified splitting, balanced class weights, and F2-weighted evaluation that accounts for class distribution.</p>
+                </div>
+                <div class="challenge-card">
+                    <h3>🔍 Missing Data</h3>
+                    <p>5 of 12 features had missing values. Strategy: XGBoost handled NaN natively, while LR/SVC used reduced-feature subsets without missing data.</p>
+                </div>
+                <div class="challenge-card">
+                    <h3>🧬 Clinical Relevance</h3>
+                    <p>Feature importance aligned with clinical knowledge — liver enzymes (AST, ALT) and cholinesterase ranked highest, confirming the model learns biologically meaningful patterns.</p>
+                </div>
+                <div class="challenge-card">
+                    <h3>📊 Metric Selection</h3>
+                    <p>Standard accuracy would be misleading (~87% from majority class). F2-weighted score properly penalizes missed hepatitis diagnoses while still considering false positive costs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <h2 class="section-title">Tech Stack</h2>
+            <p class="section-subtitle">Tools and libraries used in this project</p>
+            <div class="tech-stack">
+                <span class="tech-tag">Python 3.12</span>
+                <span class="tech-tag">scikit-learn</span>
+                <span class="tech-tag">XGBoost</span>
+                <span class="tech-tag">pandas</span>
+                <span class="tech-tag">NumPy</span>
+                <span class="tech-tag">matplotlib</span>
+                <span class="tech-tag">SHAP</span>
+                <span class="tech-tag">Jupyter Notebook</span>
+                <span class="tech-tag">Conda</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>
+                Built by <strong>Jimmy Lin</strong> &middot; 
+                Data Science Institute, Brown University &middot; 
+                <a href="https://github.com/sirjimmylin/Blood-Donor-Classification-Project" target="_blank">View Source on GitHub</a>
+            </p>
+            <p style="margin-top: 8px;">
+                Dataset: <a href="https://doi.org/10.24432/C5D612" target="_blank">Lichtinghagen et al., 2020 (UCI ML Repository)</a>
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -12,4 +12,3 @@ dependencies:
 - shap=0.45.1
 - jupyter
 
-prefix: /opt/conda
