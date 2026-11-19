@@ -10,7 +10,7 @@
 > **Author:** Jimmy Lin  
 > **Institution:** Data Science Institute, Brown University  
 > **Repository:** [sirjimmylin/Blood-Donor-Classification-Project](https://github.com/sirjimmylin/Blood-Donor-Classification-Project.git)  
-> **Interactive Project Showcase:** [Live Web Portfolio Page](https://sirjimmylin.github.io/Blood-Donor-Classification-Project/) | [`docs/index.html`](docs/index.html)
+
 
 ---
 
@@ -22,8 +22,8 @@ This project develops an end-to-end supervised machine learning pipeline to clas
 
 ### Key Clinical & Technical Results
 * **Dataset:** 615 patient instances with 12 clinical attributes from the [UCI Machine Learning Repository HCV Dataset](https://doi.org/10.24432/C5D612).
-* **Metric Alignment:** Optimized for a **weighted F2F_2F2 score** to penalize life-threatening False Negatives (missing a hepatitis infection) twice as heavily as False Positives.
-* **Top Performance:** **XGBoost Classifier** achieved an F2F_2F2 score of **0.9453 ± 0.0209**, outperforming baseline (0.8447) by **+4.76 standard deviations**.
+* **Metric Alignment:** Optimized for a **weighted F2 score** to penalize life-threatening False Negatives (missing a hepatitis infection) twice as heavily as False Positives.
+* **Top Performance:** **XGBoost Classifier** achieved an F2 score of **0.9453 ± 0.0209**, outperforming baseline (0.8447) by **+4.76 standard deviations**.
 * **Biomarker Interpretability:** Permutation importance and XGBoost gain metrics identified **AST (Aspartate Aminotransferase)** and **CHE (Cholinesterase)** as primary drivers of model decisions, corroborating established clinical consensus on hepatocellular necrosis and impaired liver synthesis.
 
 ---
@@ -32,13 +32,13 @@ This project develops an end-to-end supervised machine learning pipeline to clas
 
 All models were evaluated using stratified 5-fold cross-validation with grid search hyperparameter optimization:
 
-| Model Architecture | Feature Strategy | Weighted F2F_2F2 Score | Std Dev | Improvement vs. Baseline |
+| Model Architecture | Feature Strategy | Weighted F2 Score | Std Dev | Improvement vs. Baseline |
 | :--- | :--- | :---: | :---: | :---: |
 | **Baseline (Majority Class)** | Predicts "Blood Donor" | 0.8447 | 0.0000 | Reference Baseline |
-| **Logistic Regression** | Reduced Features (Subset 1) | 0.9235 | 0.0261 | +3.02 F2\sigmaF2 |
-| **Support Vector Classifier (Linear)** | Reduced Features (Subset 1) | 0.9313 | 0.0261 | +3.31 F2\sigmaF2 |
-| **Random Forest Classifier** | Full Features, Ensemble | 0.9387 | 0.0200 | +3.60 F2\sigmaF2 |
-| **XGBoost Classifier** 🏆 | Full Features, Gradient Boosted | **0.9453** | **0.0209** | **+4.76 F2\sigmaF2 (Winner)** |
+| **Logistic Regression** | Reduced Features (Subset 1) | 0.9235 | 0.0261 | +3.02 SD F2 |
+| **Support Vector Classifier (Linear)** | Reduced Features (Subset 1) | 0.9313 | 0.0261 | +3.31 SD F2 |
+| **Random Forest Classifier** | Full Features, Ensemble | 0.9387 | 0.0200 | +3.60 SD F2 |
+| **XGBoost Classifier** 🏆 | Full Features, Gradient Boosted | **0.9453** | **0.0209** | **+4.76 SD F2 (Winner)** |
 
 ---
 
