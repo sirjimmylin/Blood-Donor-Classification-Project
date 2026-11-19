@@ -78,7 +78,7 @@ The dataset comprises **615 patient records** classified into five disease progr
 * **Solution:** 
   * Implemented a custom **Stratified 60/20/20 train/validation/test split** ensuring all minority classes are represented across folds.
   * Incorporated balanced class-weight penalties (`class_weight="balanced"`) in linear and margin models.
-  * Evaluated models strictly via **F2F_2F2-weighted score** with `zero_division=0` to ensure unpredicted minority classes in cross-validation folds do not produce metric bias.
+  * Evaluated models strictly via **F2-weighted score** with `zero_division=0` to ensure unpredicted minority classes in cross-validation folds do not produce metric bias.
 
 ### 2. Missing Laboratory Data
 * **Challenge:** 5 continuous laboratory features contained missing measurements (26 rows total, with ALP missing ~2.9% and CHOL ~1.6%).
