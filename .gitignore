@@ -5,3 +5,7 @@
 # Runtime artifacts generated when executing notebook in src/
 src/*.png
 src/*.pkl
+
+GEMINI.md
+
+
