@@ -4,7 +4,7 @@
 **Jimmy Lin**  
 *Data Science Institute, Brown University*  
 **Repository:** [sirjimmylin/Blood-Donor-Classification-Project](https://github.com/sirjimmylin/Blood-Donor-Classification-Project.git)  
-**Interactive Showcase:** [Project Webpage](https://sirjimmylin.github.io/Blood-Donor-Classification-Project/)
+
 
 ---
 
@@ -27,6 +27,7 @@ The cohort contains 615 patient instances across 12 predictor features and 1 tar
 
 ### Target Variable Distribution
 ![Category](../figures/category.png)
+
 *Figure 1: Target variable distribution across the 5 clinical categories, exhibiting severe class imbalance.*
 
 As shown in Figure 1 and Table 1, the dataset exhibits severe class imbalance: 86.7% of instances belong to healthy blood donors, while the minority disease classes range from only 7 to 30 instances.
